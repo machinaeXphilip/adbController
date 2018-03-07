@@ -1,6 +1,6 @@
 
 /*
-adbControler
+adbController
 ccncsa 4.0 (by) Philip Steimel www.machinaesc.de
 
 node script using adb (android-debug-bridge) as a bridge for incoming android
