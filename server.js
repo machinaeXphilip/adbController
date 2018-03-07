@@ -50,39 +50,70 @@ function checkCALLIN()
   }
 }
 
+let state = "";
+let state_old = "old"
+
 function checkCALLOUT()
 {
   let CallState = shell.exec('adb logcat -d -e PhoneStatusListener -T 2000',{silent:true})
 
-  //CallState = CallState.stdout.replace("mCallState=","").replace("\n","").substr(2);
-  console.log(CallState.stdout);
+  //CallState = CallState.stdout;
 
-  if (CallState != "")
+  CallState = CallState.stdout.replace(/-/g,"").replace("beginning of main","").replace("beginning of system","").trim("\n").split("\n");
+
+  let len = CallState.length;
+  //console.log(len);
+  let latestCallState = CallState[len-1];
+
+
+  if (latestCallState != "")
   {
-    if (CallState.indexOf("PhoneState = OFFHOOK") !== -1 && CallState.indexOf("DIALING") !== -1)
+    console.log(latestCallState);
+
+
+    if (latestCallState.indexOf("PhoneState = OFFHOOK") !== -1 && latestCallState.indexOf("CallState = DIALING") !== -1)
     {
-      console.log("Dialing");
+      state = "dialing";
+      //console.log("Dialing");
     }
-    else if (CallState.indexOf("PhoneState = OFFHOOK") !== -1 && CallState.indexOf("ALERTING") !== -1)
+    else if (latestCallState.indexOf("PhoneState = OFFHOOK") !== -1 && latestCallState.indexOf("CallState = ALERTING") !== -1)
     {
-      console.log("Ringing");
+      state = "ringing";
+      //console.log("Ringing");
     }
-    else if (CallState.indexOf("PhoneState = IDLE") !== -1 && CallState.indexOf("CallState = IDLE") !== -1 && CallState.indexOf("CallState = ACTIVE") === -1)
+    else if (latestCallState.indexOf("PhoneState = IDLE") !== -1 && latestCallState.indexOf("CallState = IDLE") !== -1 /*&& state != "online"*/)
     {
-      console.log("busy"); // busy only true if not Active before
+      state = "busy";
+      //console.log("busy"); // busy only true if not Active before
     }
 
-    if (CallState.indexOf("PhoneState = OFFHOOK") !== -1 && CallState.indexOf("ACTIVE") !== -1)
+    else if (latestCallState.indexOf("PhoneState = OFFHOOK") !== -1 && latestCallState.indexOf("CallState = ACTIVE") !== -1)
     {
-      if (CallState.indexOf("PhoneState = IDLE") !== -1 && CallState.indexOf("IDLE") !== -1)
-      console.log("call ended successfully after answer.");
+      if (CallState.indexOf("PhoneState = IDLE") !== -1 && CallState.indexOf("CallState = IDLE") !== -1)
+      {
+        state = "sucess";
+      }
+      else
+      {
+        state = "online"
+      }
     }
 
+    //console.log(state);
     //console.log(CallState);
 
     // HERE REACT TO CALLSTATES:
 
   }
+
+/*
+  if (state != state_old)
+  {
+    console.log(state);
+    state_old = state;
+  }
+*/
+
 }
 
 
