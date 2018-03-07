@@ -26,9 +26,9 @@ like scavanger hunts!
     - connected via USB to machine running the script
     - from Google PlayStore: App "SMS Gateway Ultimate"
 
-    ![Scheme](readme_src/0.png)
-    ![Scheme](readme_src/1.png)
-    ![Scheme](readme_src/3.png)
+    ![Scheme](./readme_src/0.png)
+    ![Scheme](./readme_src/1.png)
+    ![Scheme](./readme_src/3.png)
         - config: FORWARDING Rule URL:
 
           `<IP OF MACHINE RUNNING THE SCRIPT>:8080?num=%from%&sms=%body%`
