@@ -25,11 +25,14 @@ not calling in)
 const shell = require('shelljs');
 const player = require('play-sound')(opts = {}); // get better sound lib with events when sound done
 const http = require('http');
+const express = require('express');
 
 let response;
 let runningInterval;
 
+let app = express();
 
+startSMSServer();
 
   // Run external tool synchronously
   response =shell.exec('adb devices',{silent:true})
@@ -173,6 +176,24 @@ function playsound()
   player.play('test.mp3', function(err){
     if (err) throw err
   })
+}
+
+function startSMSServer()
+{
+    app.get('/', function (req, res) {
+
+      res.sendStatus(200);
+      console.log(req.query);
+      //res.send('{"test":"hallo","welt":"da"}');
+    })
+
+    var server = app.listen(8080, function () {
+       var host = server.address().address
+       var port = server.address().port
+
+       console.log("sms server listening at http://%s:%s", host, port)
+    })
+
 }
 
 function sendSMS(ip,number, body)
