@@ -24,7 +24,7 @@ not calling in)
 
 const shell = require('shelljs');
 const player = require('play-sound')(opts = {}); // get better sound lib with events when sound done
-
+const http = require('http');
 
 let response;
 let runningInterval;
@@ -47,7 +47,7 @@ let runningInterval;
       setInterval(checkCALLIN, 1500);
 
       // make a testcall:
-      makeCALLOUT("+4915735981516");
+      //makeCALLOUT("+4915735981516");
 
   }
 
@@ -175,6 +175,22 @@ function playsound()
   })
 }
 
+function sendSMS(ip,number, body)
+{
+    number = encodeURIComponent(number);
+    body = encodeURIComponent(body);
+
+    http.get('http://'+ip+'/send.html?smsto='+number+'&smsbody='+body+'&smstype=sms', (resp) => {
+    resp.on('end', () => {
+      console.log("sms send");
+    });
+
+  }).on("error", (err) => {
+    console.log("sending sms Error: " + err.message);
+  });
+
+
+}
 
 
 // export the module (to be done: get global vars in via this.)
@@ -183,5 +199,6 @@ module.exports = {
     checkCALLOUT: checkCALLOUT,
     checkCALLIN: checkCALLIN,
     answer: answer,
-    hang: hang
+    hang: hang,
+    sendSMS: sendSMS
 };
