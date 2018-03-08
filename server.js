@@ -50,7 +50,7 @@ startSMSServer();
       setInterval(checkCALLIN, 1500);
 
       // make a testcall:
-      //makeCALLOUT("+4915735981516");
+      //makeCALLOUT("+49xxxxxxxxxxx");
 
   }
 
