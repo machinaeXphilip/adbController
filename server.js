@@ -24,12 +24,15 @@ not calling in)
 
 const shell = require('shelljs');
 const player = require('play-sound')(opts = {}); // get better sound lib with events when sound done
-
+const http = require('http');
+const express = require('express');
 
 let response;
 let runningInterval;
 
+let app = express();
 
+startSMSServer();
 
   // Run external tool synchronously
   response =shell.exec('adb devices',{silent:true})
@@ -47,7 +50,7 @@ let runningInterval;
       setInterval(checkCALLIN, 1500);
 
       // make a testcall:
-      makeCALLOUT("+4915735981516");
+      //makeCALLOUT("+49xxxxxxxxxxx");
 
   }
 
@@ -175,6 +178,40 @@ function playsound()
   })
 }
 
+function startSMSServer()
+{
+    app.get('/', function (req, res) {
+
+      res.sendStatus(200);
+      console.log(req.query);
+      //res.send('{"test":"hallo","welt":"da"}');
+    })
+
+    var server = app.listen(8080, function () {
+       var host = server.address().address
+       var port = server.address().port
+
+       console.log("sms server listening at http://%s:%s", host, port)
+    })
+
+}
+
+function sendSMS(ip,number, body)
+{
+    number = encodeURIComponent(number);
+    body = encodeURIComponent(body);
+
+    http.get('http://'+ip+'/send.html?smsto='+number+'&smsbody='+body+'&smstype=sms', (resp) => {
+    resp.on('end', () => {
+      console.log("sms send");
+    });
+
+  }).on("error", (err) => {
+    console.log("sending sms Error: " + err.message);
+  });
+
+
+}
 
 
 // export the module (to be done: get global vars in via this.)
@@ -183,5 +220,6 @@ module.exports = {
     checkCALLOUT: checkCALLOUT,
     checkCALLIN: checkCALLIN,
     answer: answer,
-    hang: hang
+    hang: hang,
+    sendSMS: sendSMS
 };
